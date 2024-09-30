@@ -18,7 +18,7 @@ import UIKit
 ///
 ///     Make sure to hold a strong reference to the `Animation` object, as it is only held by a weak reference.
 ///
-open class Animation: NSObject {
+open class Animation: NSObject, @unchecked Sendable {
 
     // MARK: Static properties
 
