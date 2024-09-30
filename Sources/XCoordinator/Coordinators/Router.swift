@@ -36,7 +36,7 @@ public protocol Router<RouteType>: Presentable, AnyObject {
     ///         (including animations).
     ///         If the context is not needed, use `trigger` instead.
     ///
-    func contextTrigger(_ route: RouteType, with options: TransitionOptions, completion: ContextPresentationHandler?)
+    @MainActor func contextTrigger(_ route: RouteType, with options: TransitionOptions, completion: ContextPresentationHandler?)
 }
 
 extension Router {
@@ -51,7 +51,7 @@ extension Router {
     ///     - options:
     ///         Transition options for performing the transition, e.g. whether it should be animated.
     ///
-    public func trigger(_ route: RouteType, with options: TransitionOptions) {
+    @MainActor public func trigger(_ route: RouteType, with options: TransitionOptions) {
         trigger(route, with: options, completion: nil)
     }
 
@@ -64,7 +64,7 @@ extension Router {
     ///         If present, this completion handler is executed once the transition is completed
     ///         (including animations).
     ///
-    public func trigger(_ route: RouteType, completion: PresentationHandler? = nil) {
+	@MainActor public func trigger(_ route: RouteType, completion: PresentationHandler? = nil) {
         trigger(route, with: .default, completion: completion)
     }
 
@@ -78,7 +78,7 @@ extension Router {
     ///         If present, this completion handler is executed once the transition is completed
     ///         (including animations).
     ///
-    public func trigger(_ route: RouteType, with options: TransitionOptions, completion: PresentationHandler?) {
+	@MainActor public func trigger(_ route: RouteType, with options: TransitionOptions, completion: PresentationHandler?) {
         autoreleasepool {
             contextTrigger(route, with: options) { _ in completion?() }
         }

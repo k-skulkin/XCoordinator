@@ -32,26 +32,26 @@ public protocol Coordinator: Router, TransitionPerformer {
     /// - Returns:
     ///     The prepared transition.
     ///
-    func prepareTransition(for route: RouteType) -> TransitionType
-    
+	@MainActor func prepareTransition(for route: RouteType) -> TransitionType
+
     ///
     /// This method adds a child to a coordinator's children.
     ///
     /// - Parameter presentable:
     ///     The child to be added.
     ///
-    func addChild(_ presentable: any Presentable)
-    
+	@MainActor func addChild(_ presentable: any Presentable)
+
     ///
     /// This method removes a child to a coordinator's children.
     ///
     /// - Parameter presentable:
     ///     The child to be removed.
     ///
-    func removeChild(_ presentable: any Presentable)
-    
+	@MainActor func removeChild(_ presentable: any Presentable)
+
     /// This method removes all children that are no longer in the view hierarchy.
-    func removeChildrenIfNeeded()
+	@MainActor func removeChildrenIfNeeded()
 }
 
 // MARK: - Typealiases
@@ -67,7 +67,7 @@ extension Coordinator {
 extension Coordinator {
 
     /// A Coordinator uses its rootViewController as viewController.
-    public var viewController: UIViewController! {
+	@MainActor public var viewController: UIViewController! {
         rootViewController
     }
 }
@@ -76,13 +76,13 @@ extension Coordinator {
 
 extension Coordinator where Self: AnyObject {
 
-    public func presented(from presentable: (any Presentable)?) {}
-    
-    public func childTransitionCompleted() {
+	@MainActor public func presented(from presentable: (any Presentable)?) {}
+
+	@MainActor public func childTransitionCompleted() {
         removeChildrenIfNeeded()
     }
 
-    public func contextTrigger(_ route: RouteType,
+	@MainActor public func contextTrigger(_ route: RouteType,
                                with options: TransitionOptions,
                                completion: ContextPresentationHandler?) {
         let transition = prepareTransition(for: route)
@@ -98,11 +98,11 @@ extension Coordinator where Self: AnyObject {
     /// - Returns:
     ///     A transition combining the transitions of the specified routes.
     ///
-    public func chain(routes: [RouteType]) -> TransitionType {
+	@MainActor public func chain(routes: [RouteType]) -> TransitionType {
         .multiple(routes.map(prepareTransition))
     }
 
-    public func performTransition(_ transition: TransitionType,
+	@MainActor public func performTransition(_ transition: TransitionType,
                                   with options: TransitionOptions,
                                   completion: PresentationHandler? = nil) {
         transition.perform(on: rootViewController, with: options) { [self] in

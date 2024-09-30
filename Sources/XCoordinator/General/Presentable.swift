@@ -22,7 +22,7 @@ public protocol Presentable {
     /// In the case of a `UIViewController`, it returns itself.
     /// A coordinator returns its rootViewController.
     ///
-    var viewController: UIViewController! { get }
+	@MainActor var viewController: UIViewController! { get }
 
     ///
     /// This method can be used to retrieve whether the presentable can trigger a specific route
@@ -33,7 +33,7 @@ public protocol Presentable {
     /// - Parameter route:
     ///     The route to determine a router for.
     ///
-    func router<R: Route>(for route: R) -> (any Router<R>)?
+	@MainActor func router<R: Route>(for route: R) -> (any Router<R>)?
 
     ///
     /// This method is called whenever a Presentable is shown to the user.
@@ -44,23 +44,23 @@ public protocol Presentable {
     ///     This could be a window, another viewController, a coordinator, etc.
     ///     `nil` is specified whenever a context cannot be easily determined.
     ///
-    func presented(from presentable: (any Presentable)?)
-    
+	@MainActor func presented(from presentable: (any Presentable)?)
+
     ///
     /// This method is used to register a parent coordinator to a child coordinator.
     ///
     /// - Note:
     ///     This method is used internally and should never be called directly.
     ///
-    func registerParent(_ presentable: any Presentable & AnyObject)
-    
+	@MainActor func registerParent(_ presentable: any Presentable & AnyObject)
+
     ///
     /// This method gets called when the transition of a child coordinator is being reported to its parent.
     ///
     /// - Note:
     ///     This method is used internally and should never be called directly.
     ///
-    func childTransitionCompleted()
+	@MainActor func childTransitionCompleted()
 
     ///
     /// Sets the presentable as the root of the window.
@@ -71,7 +71,7 @@ public protocol Presentable {
     /// - Parameter window:
     ///     The window to set the root of.
     ///
-    func setRoot(for window: UIWindow)
+	@MainActor func setRoot(for window: UIWindow)
 }
 
 extension Presentable {
@@ -80,7 +80,7 @@ extension Presentable {
 
     public func childTransitionCompleted() {}
 
-    public func setRoot(for window: UIWindow) {
+	@MainActor public func setRoot(for window: UIWindow) {
         let previousRoot = window.rootViewController
         window.rootViewController = viewController
         window.makeKeyAndVisible()

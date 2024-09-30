@@ -25,7 +25,7 @@ extension Coordinator where Self: AnyObject {
     ///     Keep in mind that changes in the app's structure and changes of transitions
     ///     behind the given routes can lead to runtime errors and, therefore, crashes of your app.
     ///
-    public func deepLink<RootViewController, S: Sequence>(_ route: RouteType, _ remainingRoutes: S)
+	@MainActor public func deepLink<RootViewController, S: Sequence>(_ route: RouteType, _ remainingRoutes: S)
         -> Transition<RootViewController> where S.Element == Route, TransitionType == Transition<RootViewController> {
         .deepLink(with: self, route, array: Array(remainingRoutes))
     }
@@ -43,7 +43,7 @@ extension Coordinator where Self: AnyObject {
     ///         Keep in mind that changes in the app's structure and changes of transitions
     ///         behind the given routes can lead to runtime errors and, therefore, crashes of your app.
     ///
-    public func deepLink<RootViewController>(_ route: RouteType, _ remainingRoutes: Route...)
+	@MainActor public func deepLink<RootViewController>(_ route: RouteType, _ remainingRoutes: Route...)
         -> Transition<RootViewController> where TransitionType == Transition<RootViewController> {
         .deepLink(with: self, route, array: remainingRoutes)
     }
@@ -52,7 +52,7 @@ extension Coordinator where Self: AnyObject {
 // MARK: - Transition + DeepLink
 
 extension Transition {
-    fileprivate static func deepLink<C: Coordinator & AnyObject>(with coordinator: C,
+	@MainActor fileprivate static func deepLink<C: Coordinator & AnyObject>(with coordinator: C,
                                                                  _ route: C.RouteType,
                                                                  array remainingRoutes: [Route]) -> Transition {
 
@@ -72,7 +72,7 @@ extension Transition {
 // MARK: - Route + DeepLink
 
 extension Route {
-    private func router(fromStack stack: inout [Presentable]) -> (any Router<Self>)? {
+	@MainActor private func router(fromStack stack: inout [Presentable]) -> (any Router<Self>)? {
         while !stack.isEmpty {
             if let router = stack.last?.router(for: self) {
                 return router
@@ -82,7 +82,7 @@ extension Route {
         return nil
     }
 
-    fileprivate func trigger(on presentables: [Presentable],
+	@MainActor fileprivate func trigger(on presentables: [Presentable],
                              remainingRoutes: ArraySlice<Route>,
                              with options: TransitionOptions,
                              completion: PresentationHandler?) {

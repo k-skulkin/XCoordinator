@@ -20,7 +20,7 @@ extension Transition {
     /// - Parameter presentable:
     ///     The presentable to be shown as a primary view controller.
     ///
-    public static func show(_ presentable: any Presentable) -> Transition {
+	@MainActor public static func show(_ presentable: any Presentable) -> Transition {
         Transition(presentables: [presentable], animationInUse: nil) { rootViewController, options, completion in
             rootViewController.show(
                 presentable.viewController,
@@ -42,7 +42,7 @@ extension Transition {
     /// - Parameter presentable:
     ///     The presentable to be shown as a detail view controller.
     ///
-    public static func showDetail(_ presentable: any Presentable) -> Transition {
+	@MainActor public static func showDetail(_ presentable: any Presentable) -> Transition {
         Transition(presentables: [presentable], animationInUse: nil) { rootViewController, options, completion in
             rootViewController.showDetail(
                 presentable.viewController,
@@ -67,7 +67,7 @@ extension Transition {
     ///         the current transitioningDelegate and `Animation.default` to reset the transitioningDelegate to use
     ///         the default UIKit animations.
     ///
-    public static func presentOnRoot(_ presentable: any Presentable, animation: Animation? = nil) -> Transition {
+	@MainActor public static func presentOnRoot(_ presentable: any Presentable, animation: Animation? = nil) -> Transition {
         Transition(presentables: [presentable],
                    animationInUse: animation?.presentationAnimation
         ) { rootViewController, options, completion in
@@ -93,7 +93,7 @@ extension Transition {
     ///         the current transitioningDelegate and `Animation.default` to reset the transitioningDelegate to use
     ///         the default UIKit animations.
     ///
-    public static func present(_ presentable: any Presentable, animation: Animation? = nil) -> Transition {
+	@MainActor public static func present(_ presentable: any Presentable, animation: Animation? = nil) -> Transition {
         Transition(presentables: [presentable],
                    animationInUse: animation?.presentationAnimation
         ) { rootViewController, options, completion in
@@ -115,7 +115,7 @@ extension Transition {
     ///     - presentable: The presentable to be embedded.
     ///     - container: The container to embed the presentable in.
     ///
-    public static func embed(_ presentable: any Presentable, in container: any Container) -> Transition {
+	@MainActor public static func embed(_ presentable: any Presentable, in container: any Container) -> Transition {
         Transition(presentables: [presentable], animationInUse: nil) { rootViewController, options, completion in
             rootViewController.embed(presentable.viewController,
                                      in: container,
@@ -208,7 +208,7 @@ extension Transition {
     ///     - route: The route to be triggered on the coordinator.
     ///     - coordinator: The coordinator to trigger the route on.
     ///
-    public static func route<C: Coordinator>(_ route: C.RouteType, on coordinator: C) -> Transition {
+	@MainActor public static func route<C: Coordinator>(_ route: C.RouteType, on coordinator: C) -> Transition {
         let transition = coordinator.prepareTransition(for: route)
         return Transition(presentables: transition.presentables,
                           animationInUse: transition.animation
@@ -227,7 +227,7 @@ extension Transition {
     ///     - route: The route to be triggered on the coordinator.
     ///     - router: The router to trigger the route on.
     ///
-    public static func trigger<RouteType: Route>(_ route: RouteType, on router: any Router<RouteType>) -> Transition {
+	@MainActor public static func trigger<RouteType: Route>(_ route: RouteType, on router: any Router<RouteType>) -> Transition {
         Transition(presentables: [], animationInUse: nil) { _, options, completion in
             router.trigger(route, with: options, completion: completion)
         }
@@ -261,7 +261,7 @@ extension Coordinator where Self: AnyObject {
     ///     - route: The route to be triggered for peek and pop.
     ///
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "Use `UIContextMenuInteraction` instead.")
-    public func registerPeek<RootViewController>(for source: Container,
+	@MainActor public func registerPeek<RootViewController>(for source: Container,
                                                  route: RouteType
         ) -> Transition<RootViewController> where Self.TransitionType == Transition<RootViewController> {
         let transitionGenerator = { [weak self] () -> TransitionType in

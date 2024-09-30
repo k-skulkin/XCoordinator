@@ -61,7 +61,7 @@ open class BasicCoordinator<RouteType: Route, TransitionType: TransitionProtocol
     /// - Seealso:
     ///     See `InitialLoadingType` for more information.
     ///
-    public init(rootViewController: RootViewController,
+    @MainActor public init(rootViewController: RootViewController,
                 initialRoute: RouteType? = nil,
                 initialLoadingType: InitialLoadingType = .presented,
                 prepareTransition: ((RouteType) -> TransitionType)?) {
@@ -87,7 +87,7 @@ open class BasicCoordinator<RouteType: Route, TransitionType: TransitionProtocol
     /// - Parameter presentable:
     ///     The context in which this coordinator has been shown to the user.
     ///
-    open override func presented(from presentable: (any Presentable)?) {
+	@MainActor open override func presented(from presentable: (any Presentable)?) {
         super.presented(from: presentable)
 
         if let initialRoute = initialRoute, initialLoadingType == .presented {

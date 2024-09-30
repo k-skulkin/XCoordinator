@@ -10,7 +10,7 @@ import UIKit
 
 extension BaseCoordinator {
     /// Shortcut for `BaseCoordinator.TransitionType.RootViewController`
-    public typealias RootViewController = TransitionType.RootViewController
+	public typealias RootViewController = TransitionType.RootViewController
 }
 
 ///
@@ -24,6 +24,7 @@ open class BaseCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
 
     // MARK: Stored properties
 
+	private var windowAppearanceObserver: Any?
     private var removeParentChildren: () -> Void = {}
     private var gestureRecognizerTargets = [GestureRecognizerTarget]()
     
@@ -50,7 +51,7 @@ open class BaseCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
     /// - Parameter initialRoute:
     ///     If a route is specified, it is triggered before making the coordinator visible.
     ///
-    public init(rootViewController: RootViewController, initialRoute: RouteType?) {
+    @MainActor public init(rootViewController: RootViewController, initialRoute: RouteType?) {
         self.rootViewController = rootViewController
         initialRoute.map(prepareTransition).map(performTransitionAfterWindowAppeared)
     }
@@ -61,7 +62,7 @@ open class BaseCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
     /// - Parameter initialTransition:
     ///     If a transition is specified, it is performed before making the coordinator visible.
     ///
-    public init(rootViewController: RootViewController, initialTransition: TransitionType?) {
+    @MainActor public init(rootViewController: RootViewController, initialTransition: TransitionType?) {
         self.rootViewController = rootViewController
         initialTransition.map(performTransitionAfterWindowAppeared)
     }
@@ -72,7 +73,7 @@ open class BaseCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
         self as? BaseCoordinator<R, TransitionType>
     }
 
-    open func presented(from presentable: (any Presentable)?) {}
+	@MainActor open func presented(from presentable: (any Presentable)?) {}
 
     public func removeChildrenIfNeeded() {
         children.removeAll { $0.canBeRemovedAsChild() }
@@ -99,7 +100,7 @@ open class BaseCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
     /// - Returns:
     ///     The prepared transition.
     ///
-    open func prepareTransition(for route: RouteType) -> TransitionType {
+	@MainActor open func prepareTransition(for route: RouteType) -> TransitionType {
         fatalError("Please override the \(#function) method.")
     }
     
@@ -113,18 +114,20 @@ open class BaseCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
 
     // MARK: Private methods
 
-    private func performTransitionAfterWindowAppeared(_ transition: TransitionType) {
+	@MainActor private func performTransitionAfterWindowAppeared(_ transition: TransitionType) {
         guard !UIApplication.shared.windows.contains(where: { $0.isKeyWindow }) else {
             return performTransition(transition, with: TransitionOptions(animated: false))
         }
 
-        var windowAppearanceObserver: Any?
-
         windowAppearanceObserver = NotificationCenter.default.addObserver(
-            forName: UIWindow.didBecomeKeyNotification, object: nil, queue: .main) { [weak self] _ in
-            windowAppearanceObserver.map(NotificationCenter.default.removeObserver)
-            windowAppearanceObserver = nil
-            DispatchQueue.main.async {
+            forName: UIWindow.didBecomeKeyNotification,
+			object: nil,
+			queue: .main
+		) { [weak self] _ in
+			self?.windowAppearanceObserver.map(NotificationCenter.default.removeObserver)
+			self?.windowAppearanceObserver = nil
+
+            DispatchQueue.main.async { [weak self] in
                 self?.performTransition(transition, with: TransitionOptions(animated: false))
             }
         }
@@ -133,7 +136,7 @@ open class BaseCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
 
 extension Presentable {
 
-    fileprivate func canBeRemovedAsChild() -> Bool {
+	@MainActor fileprivate func canBeRemovedAsChild() -> Bool {
         guard !(self is UIViewController) else { return true }
         guard let viewController else { return true }
         return !viewController.isInViewHierarchy
@@ -192,7 +195,7 @@ extension BaseCoordinator {
     ///         The closure to be called whenever the transition completes.
     ///         Hint: Might be called multiple times but only once per performing the transition.
     ///
-    public func registerInteractiveTransition<GestureRecognizer: UIGestureRecognizer>(
+	@MainActor public func registerInteractiveTransition<GestureRecognizer: UIGestureRecognizer>(
         for route: RouteType,
         triggeredBy recognizer: GestureRecognizer,
         handler: @escaping (_ handlerRecognizer: GestureRecognizer, _ transition: () -> TransitionAnimation?) -> Void,
@@ -237,7 +240,7 @@ extension BaseCoordinator {
     ///         The closure to be called whenever the transition completes.
     ///         Hint: Might be called multiple times but only once per performing the transition.
     ///
-    public func registerInteractiveTransition<GestureRecognizer: UIGestureRecognizer>(
+	@MainActor public func registerInteractiveTransition<GestureRecognizer: UIGestureRecognizer>(
         for route: RouteType,
         triggeredBy recognizer: GestureRecognizer,
         progress: @escaping (GestureRecognizer) -> CGFloat,

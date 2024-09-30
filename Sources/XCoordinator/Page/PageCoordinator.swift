@@ -52,7 +52,7 @@ open class PageCoordinator<RouteType: Route>: BaseCoordinator<RouteType, PageTra
     ///     - configuration:
     ///         The configuration of the rootViewController. You cannot change this configuration later anymore (Limitation of UIKit).
     ///
-    public init(rootViewController: RootViewController = .init(),
+	@MainActor public init(rootViewController: RootViewController,
                 pages: [Presentable],
                 loop: Bool = false,
                 set firstPage: (any Presentable)? = nil,
@@ -92,18 +92,20 @@ open class PageCoordinator<RouteType: Route>: BaseCoordinator<RouteType, PageTra
     ///     - configuration:
     ///         The configuration of the rootViewController. You cannot change this configuration later anymore (Limitation of UIKit).
     ///
-    public init(rootViewController: RootViewController = .init(),
-                dataSource: UIPageViewControllerDataSource,
-                set firstPage: any Presentable,
-                _ secondPage: (any Presentable)? = nil,
-                direction: UIPageViewController.NavigationDirection) {
+	@MainActor public init(
+		rootViewController: RootViewController,
+		dataSource: UIPageViewControllerDataSource,
+		set firstPage: any Presentable,
+		_ secondPage: (any Presentable)? = nil,
+		direction: UIPageViewController.NavigationDirection
+	) {
         self.dataSource = dataSource
         rootViewController.dataSource = dataSource
         super.init(rootViewController: rootViewController,
                    initialTransition: .set(firstPage, secondPage, direction: direction))
     }
 
-    public convenience init(
+	@MainActor public convenience init(
         transitionStyle: UIPageViewController.TransitionStyle = .pageCurl,
         navigationOrientation: UIPageViewController.NavigationOrientation = .horizontal,
         isDoubleSided: Bool = false,

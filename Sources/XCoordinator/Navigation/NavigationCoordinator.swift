@@ -15,7 +15,7 @@ import UIKit
 /// NavigationCoordinator especially ensures that transition animations are called,
 /// which would not be the case when creating a `BaseCoordinator<RouteType, NavigationTransition>`.
 ///
-open class NavigationCoordinator<RouteType: Route>: BaseCoordinator<RouteType, NavigationTransition> {
+@MainActor open class NavigationCoordinator<RouteType: Route>: BaseCoordinator<RouteType, NavigationTransition> {
 
     // MARK: Stored properties
 
@@ -52,7 +52,10 @@ open class NavigationCoordinator<RouteType: Route>: BaseCoordinator<RouteType, N
     /// - Parameter initialRoute:
     ///     The route to be triggered.
     ///
-    public override init(rootViewController: RootViewController = .init(), initialRoute: RouteType? = nil) {
+	@MainActor public override init(
+		rootViewController: RootViewController,
+		initialRoute: RouteType? = nil
+	) {
         if rootViewController.delegate == nil {
             rootViewController.delegate = animationDelegate
         }
@@ -66,7 +69,7 @@ open class NavigationCoordinator<RouteType: Route>: BaseCoordinator<RouteType, N
     /// - Parameter root:
     ///     The presentable to be pushed.
     ///
-    public init(rootViewController: RootViewController = .init(), root: any Presentable) {
+	@MainActor public init(rootViewController: RootViewController, root: any Presentable) {
         if rootViewController.delegate == nil {
             rootViewController.delegate = animationDelegate
         }

@@ -15,4 +15,4 @@ import UIKit
 ///     It has no requirements, although the use of enums is encouraged to make your
 ///     navigation code type safe.
 ///
-public protocol Route {}
+public protocol Route: Sendable { }

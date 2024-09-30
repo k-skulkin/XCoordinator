@@ -47,7 +47,7 @@ open class TabBarCoordinator<RouteType: Route>: BaseCoordinator<RouteType, TabBa
 
     // MARK: Initialization
 
-    public override init(rootViewController: RootViewController = .init(), initialRoute: RouteType?) {
+	@MainActor public override init(rootViewController: RootViewController, initialRoute: RouteType?) {
         if rootViewController.delegate == nil {
             rootViewController.delegate = animationDelegate
         }
@@ -60,7 +60,10 @@ open class TabBarCoordinator<RouteType: Route>: BaseCoordinator<RouteType, TabBa
     /// - Parameter tabs:
     ///     The presentables to be used as tabs.
     ///
-    public init(rootViewController: RootViewController = .init(), tabs: [Presentable]) {
+    @MainActor public init(
+		rootViewController: RootViewController,
+		tabs: [Presentable]
+	) {
         if rootViewController.delegate == nil {
             rootViewController.delegate = animationDelegate
         }
@@ -76,7 +79,7 @@ open class TabBarCoordinator<RouteType: Route>: BaseCoordinator<RouteType, TabBa
     ///         The presentable to be selected before displaying. Make sure, this presentable is one of the
     ///         specified tabs in the other parameter.
     ///
-    public init(rootViewController: RootViewController = .init(), tabs: [Presentable], select: Presentable) {
+	@MainActor public init(rootViewController: RootViewController, tabs: [Presentable], select: Presentable) {
         if rootViewController.delegate == nil {
             rootViewController.delegate = animationDelegate
         }
@@ -91,7 +94,7 @@ open class TabBarCoordinator<RouteType: Route>: BaseCoordinator<RouteType, TabBa
     ///     - tabs: The presentables to be used as tabs.
     ///     - select: The index of the presentable to be selected before displaying.
     ///
-    public init(rootViewController: RootViewController = .init(), tabs: [Presentable], select: Int) {
+    @MainActor public init(rootViewController: RootViewController, tabs: [Presentable], select: Int) {
         if rootViewController.delegate == nil {
             rootViewController.delegate = animationDelegate
         }

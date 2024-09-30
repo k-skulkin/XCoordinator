@@ -16,7 +16,7 @@ public protocol TransitionPerformer<TransitionType>: Presentable {
     associatedtype TransitionType: TransitionProtocol
 
     /// The rootViewController on which transitions are performed.
-    var rootViewController: TransitionType.RootViewController { get }
+	@MainActor var rootViewController: TransitionType.RootViewController { get }
 
     ///
     /// Perform a transition.
@@ -30,7 +30,7 @@ public protocol TransitionPerformer<TransitionType>: Presentable {
     ///     - options: The options on how to perform the transition, including the option to enable/disable animations.
     ///     - completion: The completion handler called once a transition has finished.
     ///
-    func performTransition(_ transition: TransitionType,
+	@MainActor func performTransition(_ transition: TransitionType,
                            with options: TransitionOptions,
                            completion: PresentationHandler?)
 
