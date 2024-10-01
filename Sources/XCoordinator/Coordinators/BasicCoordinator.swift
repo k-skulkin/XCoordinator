@@ -95,7 +95,7 @@ open class BasicCoordinator<RouteType: Route, TransitionType: TransitionProtocol
         }
     }
 
-    open override func prepareTransition(for route: RouteType) -> TransitionType {
+	@MainActor open override func prepareTransition(for route: RouteType) -> TransitionType {
         if let prepareTransition = prepareTransition {
             return prepareTransition(route)
         } else {

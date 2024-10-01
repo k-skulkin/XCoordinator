@@ -86,10 +86,11 @@ open class RedirectionRouter<ParentRoute: Route, RouteType: Route>: Router {
     /// - Returns:
     ///     The mapped route for the parent router.
     ///
-    open func mapToParentRoute(_ route: RouteType) -> ParentRoute {
+	@MainActor open func mapToParentRoute(_ route: RouteType) -> ParentRoute {
         guard let map = self._map else {
             fatalError("Please implement \(#function) or use the `map` closure in the initializer.")
         }
         return map(route)
     }
+	
 }
